@@ -194,3 +194,14 @@ describe('MIDI files', function() {
     smf.validate();
   });
 });
+
+describe('MTrk.note', function() {
+  it('should update the length property of the calling MTrk', function() {
+    var trk = new JZZ.MIDI.SMF.MTrk();
+    trk = trk.ch(0);
+    assert.equal(trk.length, 1);
+
+    trk = trk.note('C4', 127);
+    assert.equal(trk.length, 2);
+  });
+});
