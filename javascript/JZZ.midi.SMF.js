@@ -517,6 +517,8 @@
     return a.join('\n  ');
   };
   function _eventOrder(msg) {
+    console.log('_eventOrder');
+    console.log('msg: ', msg);
     var x = {
       0x00: 0,
       0x03: 1,
@@ -534,24 +536,37 @@
       0x7f: 17,
       0x2f: 20
     }[msg.ff];
+    console.log('x: ', x);
     if (typeof x !== 'undefined') return x;
+    console.log('didnt return early');
     if (msg.length) {
+      console.log('inside if');
       var s = msg[0] >> 4;
+      console.log('s: ', s);
       x = { 8: 10, 15: 11, 11: 12, 12: 13, 10: 15, 13: 15, 14: 15 }[s];
+      console.log('x: ', x);
       if (typeof x !== 'undefined') return x;
+      console.log('msg[1]: ', msg[1]);
       if (s == 9) return msg[1] ? 14 : 10;
     }
     return 18;
   }
 
   MTrk.prototype.add = function(t, msg) {
+    console.log('MTrk.prototype.add');
+    console.log('t: ', t);
+    console.log('msg: ', msg);
+    console.log('this: ', this);
     t = parseInt(t);
     if(isNaN(t) || t < 0) _error('Invalid parameter');
     msg = JZZ.MIDI(msg);
+    console.log('msg post JZZ.MIDI: ', msg);
     msg.tt = t;
     if (this[this.length - 1].tt < t) this[this.length - 1].tt = t; // end of track
     if (msg.ff == 0x2f || msg[0] == 0xff) return this;
     var x = _eventOrder(msg);
+    console.log('post _eventOrder call');
+    console.log('x: ', x);
     var i;
     for (i = 0; i < this.length; i++) {
       if (this[i].tt > t) break;
@@ -561,7 +576,12 @@
     return this;
   };
 
-  MTrk.prototype.send = function(msg) { this._orig.add(this._tick, msg); };
+// BUG!
+  MTrk.prototype.send = function(msg) {
+    console.log('MTrk.prototype.send');
+    console.log('msg: ', msg);
+    this.add(this._tick, msg);
+  };
   MTrk.prototype.tick = function(t) {
     if (t != parseInt(t) || t < 0) throw RangeError('Bad tick value: ' + t);
     if (!t) return this;
@@ -571,6 +591,12 @@
     return ttt;
   };
   MTrk.prototype.note = function(c, n, v, t) {
+    console.log('MTrk.prototype.note');
+    console.log('c: ', c);
+    console.log('n: ', n);
+    console.log('v: ', v);
+    console.log('t: ', t);
+    console.log('this: ', this);
     this.noteOn(c, n, v);
     if (t > 0) this.tick(t).noteOff(c, n);
     return this;
