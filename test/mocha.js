@@ -194,3 +194,15 @@ describe('MIDI files', function() {
     smf.validate();
   });
 });
+
+describe.only('MTrk', function() {
+  it('should have a length property equal to the number of midi events in itself', function() {
+    var trk = new JZZ.MIDI.SMF.MTrk();
+    trk = trk.ch(0);
+    assert.equal(trk.length, 1);
+    console.log('pre add:', trk);
+    trk = trk.note('C4', 127);
+    assert.equal(trk.length, 2);
+    console.log('post add:', trk);
+  });
+});
